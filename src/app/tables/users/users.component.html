@@ -1,0 +1,6 @@
+<app-dashboard></app-dashboard>
+<ng-container *ngIf="dataSource && tableVisible">
+  <app-table [dataSource]="dataSource" [displayedColumns]="myTableConfig"
+             (newTableEvent)="newRoute($event)"
+  ></app-table>
+</ng-container>

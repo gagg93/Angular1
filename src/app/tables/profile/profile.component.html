@@ -1,0 +1,15 @@
+<app-dashboard></app-dashboard>
+<div class="container">
+<div  class="form-group" *ngFor="let row of user | keys">
+  <ng-container *ngIf="row !== 'id' && row !== 'admin'">
+    <label>{{row | titlecase | removeUnderscore}}:</label>
+    <ng-container *ngIf="isDate(user[row])">
+      <input class="form-control" type="datetime-local" pattern="yyyy-MM-ddTHH:mm" [(ngModel)] = "user[row]" >
+    </ng-container>
+    <ng-container *ngIf="!isDate(user[row])">
+      <input class="form-control" type="text" [(ngModel)] = "user[row]" >
+    </ng-container>
+  </ng-container>
+</div>
+<app-button [buttonConfig]="button1" (click)="save()"></app-button>
+</div>

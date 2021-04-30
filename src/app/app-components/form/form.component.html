@@ -1,0 +1,18 @@
+<app-dashboard></app-dashboard>
+<div class="container">
+<div class="form-group mat-background-accent" *ngFor="let row of object | keys">
+    <div *ngIf="row !== 'id'">
+      <label>{{row | titlecase | removeUnderscore}}:</label>
+      <ng-container *ngIf="isDate(object[row])">
+        <input  class="form-control" type="datetime-local" pattern="yyyy-MM-ddTHH:mm" [(ngModel)] = "object[row]" >
+      </ng-container>
+      <ng-container *ngIf="!isDate(object[row])">
+        <input  class="form-control" type="text" [(ngModel)] = "object[row]" >
+      </ng-container>
+    </div>
+</div>
+<app-button [buttonConfig]="button2" (click)="goBack()"></app-button>
+<ng-container *ngIf="object.id === null; then thencontent else elsecontent"></ng-container>
+<ng-template #thencontent><app-button [buttonConfig]="button3" (click)="save()"></app-button></ng-template>
+<ng-template #elsecontent><app-button [buttonConfig]="button1" (click)="save()"></app-button></ng-template>
+</div>

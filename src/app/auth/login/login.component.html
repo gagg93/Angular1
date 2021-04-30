@@ -1,0 +1,28 @@
+<body class="text-center">
+<form class="logg" [formGroup]="form">
+  <fieldset>
+    <legend>Login</legend>
+    <div class="form-field">
+      <div>
+        <label>Username:</label>
+      </div>
+      <div>
+        <input name="email" formControlName="email" required="required">
+      </div>
+    </div>
+    <div class="form-field">
+      <div>
+        <label>Password:</label>
+      </div>
+      <div>
+        <input name="password" formControlName="password"
+               type="password" required="required">
+      </div>
+    </div>
+  </fieldset>
+  <div class="form-buttons">
+    <button [disabled]="!form.valid" class="btn btn-primary"
+            (click)="login()">Login</button>
+  </div>
+</form>
+</body>

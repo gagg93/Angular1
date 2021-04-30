@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+}
+.header:hover{
+  cursor: pointer;
+}
+
+
+.vertically {
+  vertical-align: middle;
+}
+
+.text{
+  vertical-align: center;
+}
+
+.grid{
+  display: grid;
+  place-items: center;
+}
+

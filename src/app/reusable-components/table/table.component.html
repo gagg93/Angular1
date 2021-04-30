@@ -1,0 +1,57 @@
+<br>
+
+<br>
+<div class="container">
+  <div class="float-right form-inline">
+      <input #searchBox class="input-group-text" placeholder="cerca" (keydown.enter)="onSearchClick(searchBox.value, fieldBox.value) ">
+      <select #fieldBox class="custom-select">
+        <option *ngFor="let field of displayedColumns.search.colums">{{field  | removeUnderscore | titlecase}}</option>
+      </select>
+  </div>
+  <br>
+  <br>
+
+<table class="table table-bordered">
+  <tr>
+    <th class="header" *ngFor="let header of displayedColumns.headers" (click)="onHeaderClick(header.key)">
+      <ng-container *ngIf="header.key===lastSortedByField; then thencontent else elsecontent" ></ng-container>
+      <ng-template #thencontent >
+          <ng-container *ngIf="ascendingOrder; then thencontent1 else elsecontent1" ></ng-container>
+          <ng-template #thencontent1 >{{header.label}} <mat-icon class="vertically">expand_more</mat-icon></ng-template>
+          <ng-template #elsecontent1 >{{header.label}} <mat-icon class="vertically">expand_less</mat-icon></ng-template>
+      </ng-template>
+      <ng-template #elsecontent>{{header.label}}</ng-template>
+    </th>
+    <ng-container *ngIf="displayedColumns.actions.includes(1) || displayedColumns.actions.includes(2) || displayedColumns.actions.includes(3) || displayedColumns.actions.includes(4) || displayedColumns.actions.includes(5)"><th>Actions</th></ng-container>
+  </tr>
+  <tr *ngFor="let element of filteredList | pagination: currentPage - 1 : displayedColumns.pagination.itemsPerPage">
+    <ng-container *ngFor="let header of displayedColumns.headers ">
+      <ng-container *ngIf="isDate(element[header.key]); then thiscontent else thatcontent"></ng-container>
+      <ng-template #thiscontent ><td>{{element[header.key] | date: "dd/MM/yyy"}}</td></ng-template>
+      <ng-template #thatcontent ><td>{{element[header.key]}}</td></ng-template>
+
+
+    </ng-container>
+    <td *ngIf="displayedColumns.actions.includes(1) || displayedColumns.actions.includes(2) || displayedColumns.actions.includes(3) || displayedColumns.actions.includes(4)">
+      <ng-container class="float-left" *ngIf="displayedColumns.actions.includes(1)"><app-button [buttonConfig]=button1 (newButtonEvent)="buttonClick(setMyWrapper(element, $event))"></app-button></ng-container>
+      <ng-container class="float-right" *ngIf="displayedColumns.actions.includes(2)"><app-button [buttonConfig]=button2 (newButtonEvent)="buttonClick(setMyWrapper(element, $event))"></app-button></ng-container>
+      <ng-container class="float-left" *ngIf="displayedColumns.actions.includes(3)"><app-button [buttonConfig]=button4 (newButtonEvent)="buttonClick(setMyWrapper(element, $event))"></app-button></ng-container>
+      <ng-container class="float-right" *ngIf="displayedColumns.actions.includes(4)"><app-button [buttonConfig]=button5 (newButtonEvent)="buttonClick(setMyWrapper(element, $event))"></app-button></ng-container>
+      <ng-container class="float-right" *ngIf="displayedColumns.actions.includes(5)"><app-button [buttonConfig]=button6 (newButtonEvent)="buttonClick(setMyWrapper(element, $event))"></app-button></ng-container>
+    </td>
+</table>
+  <ng-container class="float-left" *ngIf="displayedColumns.actions.includes(0)"><app-button [buttonConfig]=button3 (newButtonEvent)="buttonClick(setMyWrapper(null, $event))"></app-button></ng-container>
+  <div class="justify-content-lg-center form-inline">
+    <input #pageBox [(ngModel)]="currentPage" type="number" class="input-group-text" (change)="onSelectPage(pageBox.value)"  >
+    <select #selectBox class="custom-select" (change)="onPageNumberSelect(selectBox.value)" >
+      <ng-container *ngFor="let npages of displayedColumns.pagination.itemsPerPageOptions">
+        <ng-container *ngIf="npages === displayedColumns.pagination.itemsPerPage; then selcontent else notcontent"></ng-container>
+          <ng-template #selcontent><option  selected="selected">{{npages}}</option></ng-template>
+          <ng-template #notcontent><option >{{npages}}</option></ng-template>
+      </ng-container>
+    </select>
+
+  </div>
+
+</div>
+

@@ -1,0 +1,14 @@
+.text-center {
+  padding: 70px;
+}
+
+.form-buttons {
+  padding-top: 5px;
+}
+
+.logg {
+  background-color: lightblue;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  resize: horizontal;
+}
