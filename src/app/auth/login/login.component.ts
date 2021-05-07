@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit{
         .subscribe(
           (token) => {
             console.log(token.body.token);
-            if (token.body.token === 'fake-jwt-token-admin') {
+            if (token.body.token !== null/*=== 'fake-jwt-token-admin'*/) {
               this.router.navigateByUrl('/users');
             }
 
