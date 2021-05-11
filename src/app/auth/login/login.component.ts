@@ -30,12 +30,13 @@ export class LoginComponent implements OnInit{
       this.authService.authenticate(val.email, val.password)
         .subscribe(
           (token) => {
-            console.log(token.body.token);
-            if (token.body.token !== null/*=== 'fake-jwt-token-admin'*/) {
+            console.log(token.jwt);
+            console.log(token.admin);
+            if (token.admin === true) {
               this.router.navigateByUrl('/users');
             }
 
-            if (token.body.token === 'fake-jwt-token-customer') {
+            if (token.admin === false) {
               this.router.navigateByUrl('/reservations');
             }
           },

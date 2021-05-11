@@ -9,7 +9,7 @@ import * as moment from 'moment';
   providedIn: 'root'
 })
 export class ReservationService {
-  private reservationsUrl = 'api/reservations';  // URL to web api
+  private reservationsUrl = 'http://localhost:8080/reservations';  // URL to web api
   private reservations;
 
   httpOptions = {
@@ -22,7 +22,12 @@ export class ReservationService {
 
   /** GET heroes from the server */
   getReservations(): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(this.reservationsUrl)
+    let s = this.reservationsUrl;
+    if (sessionStorage.getItem('admin') === 'false') {
+      s = `${this.reservationsUrl}/my/self`;
+    }
+    console.log(s);
+    return this.http.get<Reservation[]>(s)
       .pipe(
         tap(_ => console.log('fetched reservations')),
         catchError(this.handleError<Reservation[]>('getReservations', []))
@@ -69,7 +74,7 @@ export class ReservationService {
 
   /** POST: add a new hero to the server */
   addObj(reservation: Reservation): Observable<Reservation> {
-    return this.http.post<Reservation>(this.reservationsUrl, reservation, this.httpOptions).pipe(
+    return this.http.post<Reservation>(`${this.reservationsUrl}/new`, reservation, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<Reservation>('addReservation'))
     );
@@ -87,7 +92,8 @@ export class ReservationService {
 
   /** PUT: update the hero on the server */
   update(reservation: Reservation): Observable<any> {
-    return this.http.put(this.reservationsUrl, reservation, this.httpOptions).pipe(
+    reservation.approved = null;
+    return this.http.put(`${this.reservationsUrl}/${reservation.id}`, reservation, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<any>('updateReservation'))
     );
@@ -102,7 +108,7 @@ export class ReservationService {
     console.log(this.reservations);
     let flag = false;
     reservations.forEach(ress => {
-        if (reservation.vehicleId === ress.vehicleId && reservation.id !== ress.id &&
+        if (reservation.vehicle === ress.vehicle && reservation.id !== ress.id &&
           (moment(ress.resBegin).diff(resBegin) < 0 && moment(ress.resEnd).diff(resBegin) > 0 ||
             moment(ress.resBegin).diff(resEnd) < 0 && moment(ress.resEnd).diff(resEnd) > 0 ||
             moment(ress.resBegin).diff(resBegin) >= 0 && moment(ress.resEnd).diff(resEnd) <= 0
@@ -127,6 +133,25 @@ export class ReservationService {
       console.error(error);
       return of(result as T);
     };
+  }
+
+  // tslint:disable-next-line:typedef
+  approve(res: Reservation) {
+    console.log(`${this.reservationsUrl}/approve/${res.id}`);
+    return this.http.post(`${this.reservationsUrl}/approve/${res.id}`, this.httpOptions);
+  }
+
+  // tslint:disable-next-line:typedef
+  disapprove(res: Reservation) {
+    console.log(`${this.reservationsUrl}/disapprove/${res.id}`);
+    return this.http.post(`${this.reservationsUrl}/disapprove/${res.id}`, this.httpOptions);
+  }
+
+  getReservationsByUser(id: string): Observable<any>{
+    return this.http.get(`${this.reservationsUrl}/user/${id}`, this.httpOptions).pipe(
+      tap(null),
+      catchError(this.handleError<any>('approveReservation'))
+    );
   }
 }
 

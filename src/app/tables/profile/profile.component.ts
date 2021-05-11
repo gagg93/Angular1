@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
-import {User} from '../../models/user';
 import {MyButtonConfig} from '../../my-configs/my-button-config';
 import {Location} from '@angular/common';
+import * as moment from 'moment';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -10,28 +11,30 @@ import {Location} from '@angular/common';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  user: User;
+  user: any;
   button1: MyButtonConfig =
-    {customCssClass: 'accent', text: 'edit', icon: 'done'
+    {
+      customCssClass: 'accent', text: 'edit', icon: 'done'
     };
 
-  constructor(private userService: UserService, private location: Location) { }
+  constructor(private userService: UserService, private location: Location, private router: Router) {
+  }
 
   ngOnInit(): void {
-    this.userService.getById(Number.parseInt(sessionStorage.getItem('id'), 10)).subscribe(x => this.user = x);
+    this.userService.getProfile()
+      .subscribe(x => {
+        this.user = x;
+        this.user.birthDate = moment(this.user.birthDate).format('yyyy-MM-DDThh:mm');
+      });
   }
 
 
-  isDate(field: any): boolean{
+  isDate(field: any): boolean {
     return Date.parse(field) && isNaN(field);
   }
 
   save(): void {
     this.userService.update(this.user)
-      .subscribe(() => this.goBack());
-  }
-
-  goBack(): void {
-    this.location.back();
+      .subscribe(() => this.router.navigateByUrl('/reservations'));
   }
 }

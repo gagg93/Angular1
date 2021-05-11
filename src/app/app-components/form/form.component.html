@@ -3,10 +3,10 @@
 <div class="form-group mat-background-accent" *ngFor="let row of object | keys">
     <div *ngIf="row !== 'id'">
       <label>{{row | titlecase | removeUnderscore}}:</label>
-      <ng-container *ngIf="isDate(object[row])">
+      <ng-container *ngIf="isDate(row)">
         <input  class="form-control" type="datetime-local" pattern="yyyy-MM-ddTHH:mm" [(ngModel)] = "object[row]" >
       </ng-container>
-      <ng-container *ngIf="!isDate(object[row])">
+      <ng-container *ngIf="!isDate(row)">
         <input  class="form-control" type="text" [(ngModel)] = "object[row]" >
       </ng-container>
     </div>

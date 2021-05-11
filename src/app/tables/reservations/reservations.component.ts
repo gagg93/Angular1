@@ -12,8 +12,8 @@ import {Reservation} from '../../models/reservation';
 
 
 const headerconfig: MyHeaders[] = [
-  {key: 'userId' , label: 'User'},
-  {key: 'vehicleId' , label: 'Macchina'},
+  {key: 'user' , label: 'User'},
+  {key: 'vehicle' , label: 'Macchina'},
   {key: 'resBegin' , label: 'Data di inizio'},
   {key: 'resEnd' , label: 'Data di fine'},
   {key: 'approved', label: 'Approvata'}];
@@ -24,7 +24,7 @@ const orderConfig: MyOrder = {
 };
 
 const search: MySearch = {
-  colums: ['userId', 'vehicleId' , 'resBegin' , 'resEnd', 'approved']
+  colums: ['user', 'vehicle' , 'resBegin' , 'resEnd', 'approved']
 };
 
 const pagination: MyPagination =
@@ -63,13 +63,14 @@ export class ReservationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.url.subscribe(params => {this.urlSegments = params; this.getReservations(); });
-    if (sessionStorage.getItem('token') === 'fake-jwt-token-admin') {
+    if (sessionStorage.getItem('admin') === 'true') {
       this.myTableConfig.actions = [MyTableActionEnum.APPROVE, MyTableActionEnum.DISAPPROVE];
     }
   }
 
   getReservations(): void {
-    this.reservationService.getReservations().subscribe(x => {if (sessionStorage.getItem('token') === 'fake-jwt-token-admin'
+    if (this.urlSegments[1] === undefined){this.reservationService.getReservations().subscribe(x =>
+    {if (sessionStorage.getItem('admin') === 'true'
       && this.urlSegments[0] === undefined) {
       this.dataSource = x;
     }else{
@@ -80,15 +81,19 @@ export class ReservationsComponent implements OnInit {
       url = this.urlSegments[0].toString();
     }else{url = this.urlSegments[0];
     }
-      if ((sessionStorage.getItem('token') === 'fake-jwt-token-customer' && row.userId.toString() === sessionStorage.getItem('id'))
-      ||  url === row.userId.toString() ) {
+      if ((sessionStorage.getItem('admin') === 'false' && row.user.toString() === sessionStorage.getItem('username'))
+      ||  url === row.user.toString() ) {
       this.dataSource.push(row);
     }
-    }); }}); }
+    }); }});
+    }else{
+      this.reservationService.getReservationsByUser(this.urlSegments[1].toString()).subscribe(x => this.dataSource = x);
+    }
+  }
 
 
   newRoute(event: MyWrapper): void {
-    let url;
+    let url = null;
     if (event.command === 'edit') {
       url = './' + event.command + '/reservation/' + event.object.id;
     }
@@ -97,31 +102,28 @@ export class ReservationsComponent implements OnInit {
     }
     if (event.command === 'approve') {
       const res = this.dataSource.find(x => x.id === event.object.id);
-      res.approved = true;
-      this.reservationService.update(res);
-      url = '/reservations/';
-      if (this.urlSegments[0] !== undefined){
+      this.reservationService.approve(res).subscribe(_ => {this.getReservations(); }, _ => console.log('cazzoo'));
+      /*if (this.urlSegments[0] !== undefined){
         url += this.urlSegments[0].toString();
-      }
+      }*/
     }
     if (event.command === 'disapprove') {
       const res = this.dataSource.find(x => x.id === event.object.id);
-      res.approved = false;
-      this.reservationService.update(res);
-      url = '/reservations/';
-      if (this.urlSegments[0] !== undefined){
+      this.reservationService.disapprove(res).subscribe(_ => {this.getReservations(); }, _ => console.log('cazzooo'));
+      /*if (this.urlSegments[0] !== undefined){
         url += this.urlSegments[0].toString();
-      }
+      }*/
     }
     if (event.command === 'delete') {
       if (confirm('Are you sure to delete ' + event.object.id)) {
         url = '/reservations';
         console.log(event.object.id);
-        this.reservationService.deleteReservation(event.object.id).subscribe();
-        this.getReservations();
+        this.reservationService.deleteReservation(event.object.id).subscribe(_ => {this.getReservations(); } );
       }else{return; }
     }
     console.log(url);
-    this.router.navigate([url], {relativeTo: this.route});
+    if (url !== null) {
+      this.router.navigate([url], {relativeTo: this.route});
+    }
   }
 }

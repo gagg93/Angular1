@@ -13,7 +13,7 @@ logged: boolean;
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.admin = sessionStorage.getItem('token') === 'fake-jwt-token-admin';
+    this.admin = ('true' === sessionStorage.getItem('admin'));
     if (sessionStorage.getItem('token')) {
       this.logged = true;
     }

@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   constructor(public router: Router) {}
 
   canActivate(): boolean {
-    if (sessionStorage.getItem('token') !== 'fake-jwt-token-admin') {
+    if (!sessionStorage.getItem('admin')) {
       this.router.navigate(['login']);
       return false;
     }

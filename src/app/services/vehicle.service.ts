@@ -8,7 +8,7 @@ import {Vehicle} from '../models/vehicle';
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
 
-  private vehiclesUrl = 'api/vehicles';  // URL to web api
+  private vehiclesUrl = 'http://localhost:8080/vehicles';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -62,7 +62,8 @@ export class VehicleService {
 
   /** POST: add a new hero to the server */
   addObj(vehicle: Vehicle): Observable<Vehicle> {
-    return this.http.post<Vehicle>(this.vehiclesUrl, vehicle, this.httpOptions).pipe(
+    console.log(vehicle.annoImmatricolazione);
+    return this.http.post<Vehicle>(`${this.vehiclesUrl}/new`, vehicle, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<Vehicle>('addUser'))
     );
@@ -78,7 +79,8 @@ export class VehicleService {
 
   /** PUT: update the hero on the server */
   update(vehicle: Vehicle): Observable<any> {
-    return this.http.put(this.vehiclesUrl, vehicle, this.httpOptions).pipe(
+    const url = `${this.vehiclesUrl}/${vehicle.id}`;
+    return this.http.put(url, vehicle, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<any>('updateVehicle'))
     );

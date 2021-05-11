@@ -1,7 +1,7 @@
 export interface Reservation {
   id: number;
-  userId: number;
-  vehicleId: number;
+  user: number;
+  vehicle: number;
   resBegin: Date;
   resEnd: Date;
   approved: boolean;

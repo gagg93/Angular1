@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {MyHeaders} from '../../my-configs/my-headers';
 import {MyOrder} from '../../my-configs/my-order';
 import {MySearch} from '../../my-configs/my-search';
@@ -14,8 +14,8 @@ import {Reservation} from '../../models/reservation';
 
 const headerconfig: MyHeaders[] = [
   {key: 'username' , label: 'Username'},
-  {key: 'name' , label: 'Nome'},
-  {key: 'surname' , label: 'Cognome'},
+  {key: 'firstName' , label: 'Nome'},
+  {key: 'lastName' , label: 'Cognome'},
   {key: 'birthDate' , label: 'Data di nascita'}];
 
 const orderConfig: MyOrder = {
@@ -58,7 +58,7 @@ export class UsersComponent implements OnInit {
   tableVisible = true;
 
   constructor(private userService: UserService, private router: Router, private route: ActivatedRoute,
-              private reservationService: ReservationService, private cdr: ChangeDetectorRef) {
+              private reservationService: ReservationService) {
   }
 
   ngOnInit(): void {
@@ -73,7 +73,7 @@ export class UsersComponent implements OnInit {
   newRoute(event: MyWrapper): void {
     let url;
     if (event.command === 'reservations') {
-      url = '/' + event.command + '/' + event.object.id;
+      url = '/' + event.command + '/user/' + event.object.id;
     }
     if (event.command === 'edit') {
       url = './' + event.command + '/user/' + event.object.id;
@@ -86,8 +86,8 @@ export class UsersComponent implements OnInit {
         console.log(event.object.id.toString());
         let flag = true;
         this.reservations.forEach(x => { console.log(event.object.id.toString());
-                                         console.log(x.userId.toString());
-                                         if (x.userId.toString() === event.object.id.toString()) {flag = false; }});
+                                         console.log(x.user.toString());
+                                         if (x.user.toString() === event.object.id.toString()) {flag = false; }});
         if (flag) {
           url = '/users';
           console.log(event.object.id);

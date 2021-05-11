@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import {InMemoryDataService} from './in-memory-data.service';
+import {Observable} from 'rxjs';
 
 export class User{
   constructor(
@@ -26,22 +26,23 @@ export class AuthService {
 
   constructor(
     private httpClient: HttpClient,
-    private inMemoryDataService: InMemoryDataService
+    // private inMemoryDataService: InMemoryDataService
   ) {
   }
 
 
 
-  // tslint:disable-next-line:typedef
-  authenticate(username, password) {
+
+  authenticate(username, password): Observable<any>{
     return this.httpClient.post<any>('http://localhost:8080/authenticate', {username, password}, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       map(
-        userData => {
+        (userData: any) => {
           sessionStorage.setItem('username', username);
-          const tokenStr = 'Bearer ' + userData.token;
-          sessionStorage.setItem('token', tokenStr);
+          sessionStorage.setItem('admin', userData.admin);
+          const tokenStr = 'Bearer ' + userData.jwt;
+          sessionStorage.setItem('jwt', tokenStr);
           return userData;
         }
       ));

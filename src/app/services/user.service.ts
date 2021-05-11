@@ -9,7 +9,7 @@ import { User} from '../models/user';
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  private usersUrl = 'api/users';  // URL to web api
+  private usersUrl = 'http://localhost:8080/users';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -63,7 +63,7 @@ export class UserService {
 
   /** POST: add a new hero to the server */
   addObj(user: User): Observable<User> {
-    return this.http.post<User>(this.usersUrl, user, this.httpOptions).pipe(
+    return this.http.post<User>(`${this.usersUrl}/new`, user, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<User>('addUser'))
     );
@@ -81,7 +81,8 @@ export class UserService {
 
   /** PUT: update the hero on the server */
   update(user: User): Observable<any> {
-    return this.http.put(this.usersUrl, user, this.httpOptions).pipe(
+    const url = `${this.usersUrl}/${user.id}`;
+    return this.http.put(url, user, this.httpOptions).pipe(
       tap(null),
       catchError(this.handleError<any>('updateUser'))
     );
@@ -102,7 +103,26 @@ export class UserService {
     };
   }
 
-  /** Log a HeroService message with the MessageService */
-  // tslint:disable-next-line:typedef
+  getUserByUsername(username: string): Observable<User> {
+    const url = `${this.usersUrl}/username/${username}`;
+    return this.http.get<User>(url).pipe(
+      tap(null),
+      catchError(this.handleError<User>(`getUser id=${username}`))
+    );
+  }
 
+  getProfile(): Observable<User> {
+    const url = `${this.usersUrl}/profile`;
+    return this.http.get<User>(url, {
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    });
+  }
+
+  updateProfile(user: User): Observable<any> {
+    const url = `${this.usersUrl}/my/profile`;
+    return this.http.put<User>(url, user).pipe(
+      tap(null),
+      catchError(this.handleError<User>(`getProfile`))
+    );
+  }
 }

@@ -15,7 +15,7 @@ import {Reservation} from '../../models/reservation';
 const headerconfig: MyHeaders[] = [
   {key: 'casaCostruttrice' , label: 'Casa costruttrice'},
   {key: 'modello' , label: 'Modello'},
-  {key: 'annoDiImmatricolazione' , label: 'Anno di immatricolazione'},
+  {key: 'annoImmatricolazione' , label: 'Anno di immatricolazione'},
   {key: 'targa' , label: 'Targa'}];
 
 const orderConfig: MyOrder = {
@@ -24,7 +24,7 @@ const orderConfig: MyOrder = {
 };
 
 const search: MySearch = {
-  colums: ['casaCostruttrice', 'modello' , 'annoDiImmatricolazione' , 'targa']
+  colums: ['casaCostruttrice', 'modello' , 'annoImmatricolazione' , 'targa']
 };
 
 const pagination: MyPagination =
@@ -62,7 +62,7 @@ export class VehiclesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getVehicles();
-    if (sessionStorage.getItem('token') === 'fake-jwt-token-customer') {
+    if (sessionStorage.getItem('admin') === 'false') {
       this.myTableConfig.actions = [];
     }
   }
@@ -84,8 +84,8 @@ export class VehiclesComponent implements OnInit {
       if (confirm('Are you sure to delete ' + event.object.id)) {
         let flag = true;
         this.reservations.forEach(x => { console.log(event.object.id.toString());
-                                         console.log(x.vehicleId.toString());
-                                         if (x.vehicleId.toString() === event.object.id.toString()) {flag = false; }});
+                                         console.log(x.vehicle.toString());
+                                         if (x.vehicle.toString() === event.object.id.toString()) {flag = false; }});
         if (flag) {
           url = '/vehicles';
           console.log(event.object.id);

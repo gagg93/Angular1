@@ -15,6 +15,7 @@ const routes: Routes = [
   {path: 'profile', component: ProfileComponent, canActivate: [CustomerAuthGuard]},
   { path: 'reservations', children: [{path: '', component: ReservationsComponent, canActivate: [CustomerAuthGuard]},
       {path: ':id', component: ReservationsComponent, canActivate: [AuthGuard]},
+      {path: 'user/:id', component: ReservationsComponent, canActivate: [AuthGuard]},
       {path: 'edit/reservation/:id', component: FormComponent, canActivate: [CustomerAuthGuard]},
       {path: 'new/reservation', component: FormComponent, canActivate: [CustomerAuthGuard]},
       {path: 'delete/reservation/:id', component: ReservationsComponent, canActivate: [CustomerAuthGuard]}]},

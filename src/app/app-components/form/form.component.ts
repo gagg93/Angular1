@@ -37,23 +37,26 @@ constructor(private activatedRoute: ActivatedRoute, private vehicleService: Vehi
 
   ngOnInit(): void {
     this.reservationService.getReservations().subscribe(res => this.reservations = res);
-    this.userService.getUsers().subscribe(users => this.users = users);
+    if (sessionStorage.getItem('admin') === ' true') {
+      this.userService.getUsers().subscribe(users => this.users = users);
+    }
     this.vehicleService.getVehicles().subscribe(vehicles => this.vehicles = vehicles);
     this.activatedRoute.url.subscribe(params => this.urlSegments = params);
     switch (this.urlSegments[1].toString()){
       case 'vehicle': this.service = this.vehicleService;
-                      this.object = {id: null, casaCostruttrice: '', modello: '', annoDiImmatricolazione: '', targa: null}; break;
+                      this.object = {id: null, casaCostruttrice: '', modello: '', annoImmatricolazione: '', targa: null}; break;
       case 'user': this.service = this.userService; this.object = {
-        id: null, admin: false, password: '', username: '', name: '', surname: '', birthDate: '2021-04-09T11:18'};
+        id: null, admin: false, password: '', username: '', firstName: '', lastName: '', birthDate: '2021-04-09T11:18'};
                    break;
       case 'reservation': this.service = this.reservationService;
-                          this.object = {id: null, userId: sessionStorage.getItem('id'), vehicleId: null , resBegin: moment().add(2, 'days')
+                          this.object = {id: null, user: sessionStorage.getItem('username'), vehicle: null , resBegin: moment().add(2, 'days')
                               .format('yyyy-MM-DDTHH:mm'), resEnd: moment().add(2, 'days').add(1, 'hour')
                               .format('yyyy-MM-DDTHH:mm')};
                           break;
     }
     if (this.urlSegments[0].toString() === 'edit'){
-      this.service.getById(+this.urlSegments[2].path.toString()).subscribe(params => this.object = params);
+      this.service.getById(+this.urlSegments[2].path.toString()).subscribe(params =>
+      {this.object = params; Object.keys(this.object).forEach(key => console.log(key)); });
       Object.keys(this.object).forEach(key => {if (this.isDate(this.object)) {
         this.object[key] = moment(this.object[key]).format('yyyy-MM-DDThh:mm');
       }});
@@ -67,22 +70,20 @@ constructor(private activatedRoute: ActivatedRoute, private vehicleService: Vehi
   save(): void {
   let flag = true;
   const fields: string[] = [];
-  Object.keys(this.object).forEach(key => {if (key !== 'id' && (
+  Object.keys(this.object).forEach(key => {if (key !== 'id' && key !== 'approved' && (
     this.object[key] === null || this.object[key].toString().trim() === '') ) { flag = false; fields.push(key); }});
   if (!flag) {
     alert ('field missing ' + fields.toString());
     return;
   }
   if (this.urlSegments[1].toString() === 'reservation') {
-    flag = false;
-    console.log(this.users.length);
-    this.users.forEach(user => {if (user.id.toString() === this.object.userId.toString()) {flag = true; }});
+    flag = sessionStorage.getItem('username') === this.object.user.toString();
     if (!flag) {
-      alert('user not existing');
+      alert('user not you');
       return;
     }
     flag = false;
-    this.vehicles.forEach(vehicle => {if (vehicle.id.toString() === this.object.vehicleId.toString()) {flag = true; }});
+    this.vehicles.forEach(vehicle => {if (vehicle.targa.toString() === this.object.vehicle.toString()) {flag = true; }});
     if (!flag) {
       alert('vehicle not existing');
       return;
@@ -104,6 +105,10 @@ constructor(private activatedRoute: ActivatedRoute, private vehicleService: Vehi
   }
 
   isDate(field: any): boolean{
-  return Date.parse(field) && isNaN(field);
+  if ( Date.parse(this.object[field]) && isNaN(this.object[field])) {
+    this.object[field] = moment(this.object[field]).format('yyyy-MM-DDThh:mm');
+    return true;
+  }
+  return false;
   }
 }

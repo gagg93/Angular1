@@ -3,5 +3,5 @@ export interface Vehicle {
   casaCostruttrice: string;
   modello: string;
   targa: string;
-  annoDiImmatricolazione: number;
+  annoImmatricolazione: number;
 }
