@@ -112,7 +112,7 @@ export class UserService {
   }
 
   getProfile(): Observable<User> {
-    const url = `${this.usersUrl}/profile`;
+    const url = `${this.usersUrl}/my/profile`;
     return this.http.get<User>(url, {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     });

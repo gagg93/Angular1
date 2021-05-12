@@ -34,7 +34,7 @@ export class ProfileComponent implements OnInit {
   }
 
   save(): void {
-    this.userService.update(this.user)
+    this.userService.updateProfile(this.user)
       .subscribe(() => this.router.navigateByUrl('/reservations'));
   }
 }

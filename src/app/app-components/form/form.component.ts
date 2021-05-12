@@ -95,10 +95,10 @@ constructor(private activatedRoute: ActivatedRoute, private vehicleService: Vehi
     }
   }
   if (this.object.id !== null) {
-    if (this.object.approved !== undefined && this.object.approved === true) {this.object.approved = false; }
+    if (this.object.approved !== undefined && this.object.approved === true) {this.object.approved = null; }
     if (this.object.userId !== undefined ) {this.object.userId = sessionStorage.getItem('id'); }
     this.service.update(this.object)
-      .subscribe(() => this.goBack());
+        .subscribe(() => this.goBack());
   }else{
     this.service.addObj(this.object)
       .subscribe(() => this.goBack());  }
